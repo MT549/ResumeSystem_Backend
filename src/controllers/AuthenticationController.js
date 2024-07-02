@@ -31,6 +31,60 @@ module.exports = {
       })
     }
   },
+  async login (req, res) {
+    try {
+      const {email, password} = req.body
+      const user = await User.findOne({
+        where: {
+          email: email
+        }
+      })
+
+      if (!user) {
+        return res.status(403).send({
+          error: 'The login information was incorrect'
+        })
+      }
+
+      const isPasswordVaild = password === user.password
+      if (!isPasswordVaild) {
+        return res.status(403).send({
+          error: 'The login information was incorrect'
+        })
+      }
+
+      let expireTime = new Date();
+      expireTime.setDate(expireTime.getDate() + 1);
+      console.log("ex time" + expireTime)
+      const session = await Session.create({
+        email: user.email,
+        expirationDate: expireTime
+      })
+      console.log("Session after")
+
+      if(session){
+        console.log("return" + session)
+        res.send({
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          permission: user.permission,
+          sessionId: session.id
+        })
+      }
+      else{
+        res.status(500).send({
+          error: 'Failed to create New Session'
+        })
+      }
+
+      
+    } catch (err) {
+      res.status(500).send({
+        error: 'An error has occured trying to log in'
+      })
+    }
+  },
   async getAllUsers (req, res) {
     try {
       const user = await User.findAll({
