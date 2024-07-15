@@ -30,5 +30,39 @@ fs
 
   db.sequelize = sequelize
   db.Sequelize = Sequelize
+  
+  db.User.hasMany(db.Session)
+  db.Session.belongsTo(db.User)
+  //db.User.hasMany(db.EducationDetails)
+  //db.EducationDetails.belongsTo(db.User)
+  //db.User.hasMany(db.ExperienceDetails)
+  //db.ExperienceDetails.belongsTo(db.User)
+  //db.User.hasMany(db.Skills)
+  //db.Skills.belongsTo(db.User)
+  db.User.hasMany(db.Resume)
+  db.Resume.belongsTo(db.User)
+
+  db.Resume.hasMany(db.ResumeVersionControl)
+  db.ResumeVersionControl.belongsTo(db.Resume)
+
+  db.ResumeVersionControl.hasMany(db.EducationDetails)
+  db.EducationDetails.belongsTo(db.ResumeVersionControl)
+  db.ResumeVersionControl.hasMany(db.ExperienceDetails)
+  db.ExperienceDetails.belongsTo(db.ResumeVersionControl)
+  db.ResumeVersionControl.hasMany(db.Skills)
+  db.Skills.belongsTo(db.ResumeVersionControl)
+  db.ResumeVersionControl.hasMany(db.ProjectDetails)
+  db.ProjectDetails.belongsTo(db.ResumeVersionControl)
+
+  db.EducationDetails.hasMany(db.Awards)
+  db.Awards.belongsTo(db.EducationDetails)
+  db.EducationDetails.hasMany(db.Courses)
+  db.Courses.belongsTo(db.EducationDetails)
+
+  db.ExperienceDetails.hasMany(db.ExperienceNotes)
+  db.ExperienceNotes.belongsTo(db.ExperienceDetails)
+
+  db.ProjectDetails.hasMany(db.ProjectNotes)
+  db.ProjectNotes.belongsTo(db.ProjectDetails)
 
   module.exports = db
