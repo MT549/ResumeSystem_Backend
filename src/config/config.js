@@ -3,7 +3,7 @@ const path = require('path')
 module.exports = {
   port: process.env.PORT || 8081,
   db: {
-    database: process.env.DB_NAME || 'Resume_Generator',
+    database: process.env.DB_NAME || 'Resume_DB',
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASS || '',
     options: {
