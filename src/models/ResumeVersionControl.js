@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes) =>
         phoneNumber: DataTypes.STRING,
         email: DataTypes.STRING,
         websiteURL: DataTypes.STRING,
+        linkedinURL: DataTypes.STRING,
         professionalSummary: DataTypes.TEXT,
         templaterType: DataTypes.STRING,
         version: DataTypes.INTEGER,
