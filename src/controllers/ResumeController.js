@@ -22,6 +22,7 @@ module.exports = {
                 phoneNumber: req.body.phoneNumber,
                 email: req.body.email,
                 websiteURL: req.body.websiteURL,
+                linkedinURL: req.body.linkedinURL,
                 professionalSummary: req.body.professionalSummary,
                 templaterType: req.body.templaterType
             })
