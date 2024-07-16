@@ -58,13 +58,15 @@ module.exports = {
       console.log("ex time" + expireTime)
       const session = await Session.create({
         email: user.email,
-        expirationDate: expireTime
+        expirationDate: expireTime,
+        UserId: user.id
       })
       console.log("Session after")
 
       if(session){
         console.log("return" + session)
         res.send({
+          id: user.id,
           email: user.email,
           firstName: user.firstName,
           lastName: user.lastName,
