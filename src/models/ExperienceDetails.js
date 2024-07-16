@@ -4,7 +4,6 @@ module.exports = (sequelize, DataTypes) =>
         roleName: DataTypes.STRING,
         location: DataTypes.STRING,
         startDate: DataTypes.STRING,
-        endDate: DataTypes.STRING,
-        expreienceType: DataTypes.STRING
+        endDate: DataTypes.STRING
     })
   
