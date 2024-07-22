@@ -71,6 +71,10 @@ module.exports = {
           firstName: user.firstName,
           lastName: user.lastName,
           permission: user.permission,
+          phoneNumber: user.phoneNumber,
+          location: user.location,
+          websiteURL: user.websiteURL,
+          linkedinURL: user.linkedinURL,
           sessionId: session.id
         })
       }
@@ -125,6 +129,10 @@ module.exports = {
         user.lastName = req.body.lastName
         user.phoneNumber = req.body.phoneNumber
         user.gender = req.body.gender
+        user.location = req.body.location
+        user.websiteURL = req.body.websiteURL
+        user.linkedinURL = req.body.linkedinURL
+        
         if(req.body.password != null && req.body.password != ""){
           user.password = req.body.password
         }
