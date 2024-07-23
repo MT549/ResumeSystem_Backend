@@ -53,6 +53,10 @@ fs
   db.Skills.belongsTo(db.ResumeVersionControl)
   db.ResumeVersionControl.hasMany(db.ProjectDetails)
   db.ProjectDetails.belongsTo(db.ResumeVersionControl)
+  db.ResumeVersionControl.hasMany(db.Leadership)
+  db.Leadership.belongsTo(db.ResumeVersionControl)
+  db.ResumeVersionControl.hasMany(db.Honors)
+  db.Honors.belongsTo(db.ResumeVersionControl)
 
   db.EducationDetails.hasMany(db.Awards)
   db.Awards.belongsTo(db.EducationDetails)
@@ -64,5 +68,11 @@ fs
 
   db.ProjectDetails.hasMany(db.ProjectNotes)
   db.ProjectNotes.belongsTo(db.ProjectDetails)
+
+  db.Leadership.hasMany(db.LeadershipNotes)
+  db.LeadershipNotes.belongsTo(db.Leadership)
+
+  db.Honors.hasMany(db.HonorNotes)
+  db.HonorNotes.belongsTo(db.Honors)
 
   module.exports = db
