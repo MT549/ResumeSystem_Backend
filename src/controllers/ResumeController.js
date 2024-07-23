@@ -1,5 +1,5 @@
 const { where } = require('sequelize')
-const {Resume, ResumeVersionControl, EducationDetails, Awards, Courses, ExperienceDetails, ExperienceNotes, Skills, ProjectDetails, ProjectNotes} = require('../models')
+const {Resume, ResumeVersionControl, EducationDetails, Awards, Courses, ExperienceDetails, ExperienceNotes, Skills, ProjectDetails, ProjectNotes, Honors, HonorNotes,Leadership, LeadershipNotes} = require('../models')
 
 module.exports = {
   async saveResume (req, res) {
@@ -21,8 +21,6 @@ module.exports = {
                 location: req.body.location,
                 phoneNumber: req.body.phoneNumber,
                 email: req.body.email,
-                websiteURL: req.body.websiteURL,
-                linkedinURL: req.body.linkedinURL,
                 professionalSummary: req.body.professionalSummary,
                 templaterType: req.body.templaterType
             })
@@ -77,6 +75,44 @@ module.exports = {
                   }
                 });
 
+                req.body.leadershipDetails.forEach( async leader => {
+                  const leadership = await Leadership.create({
+                    ResumeVersionControlId: resumeVersionControl.id,
+                    orgName: leader.orgName,
+                    leadershipPosition: leader.leadershipPosition,
+                    startDate : leader.startDate ,
+                    endDate: leader.endDate
+                  })
+                  if(leadership){
+                    console.log("Leadership Added.")
+                    leader.leadershipNotes.forEach(async leaderNote => {
+                      const leadershipNote = await LeadershipNotes.create({
+                        description: leaderNote,
+                        LeadershipId: leadership.id
+                      })
+                    });
+                  }
+                });
+
+                req.body.honorDetails.forEach( async honorEle => {
+                  const honor = await Honors.create({
+                    ResumeVersionControlId: resumeVersionControl.id,
+                    name: honorEle.name,
+                    honorOrg: honorEle.honorOrg,
+                    startDate : honorEle.startDate,
+                    endDate: honorEle.endDate
+                  })
+                  if(honor){
+                    console.log("Honor Added.")
+                    honorEle.honorNotes.forEach(async honorNoteEle => {
+                      const honorNote = await HonorNotes.create({
+                        description: honorNoteEle,
+                        HonorId: honor.id
+                      })
+                    });
+                  }
+                });
+
                 req.body.projectDetails.forEach( async element10 => {
                   const project = await ProjectDetails.create({
                     ResumeVersionControlId: resumeVersionControl.id,
@@ -120,6 +156,38 @@ module.exports = {
       console.log(err)
       res.status(400).send({
         error: 'Some issue occured while saving story.'
+      })
+    }
+  },
+  
+  async getUserResumes (req, res){
+    try {
+      var resume = await Resume.findAll({
+        attributes: ['id', 'resumeTitle', 'UserId'],
+        include: [
+          {
+            model: ResumeVersionControl,
+            include: [
+              {model: EducationDetails, include: [{model: Awards}, {model:Courses}]},
+              {model: ExperienceDetails, include: [{model: ExperienceNotes}]},
+              {model: ProjectDetails, include: [{model: ProjectNotes}]},
+              {model: Honors, include: [{model: HonorNotes}]},
+              {model: Leadership, include: [{model: LeadershipNotes}]},
+              {model: Skills}
+            ],
+
+          }
+        ],
+        where: {
+          UserId: req.params.id
+        }
+      })
+
+      res.send(resume)
+    } catch (err) {
+      console.log(err)
+      res.status(400).send({
+        error: 'Some issue occured while getting resume.'
       })
     }
   },
