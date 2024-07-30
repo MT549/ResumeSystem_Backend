@@ -285,4 +285,162 @@ module.exports = {
       })
     }
   },
+
+  async saveResumeVersion (req, res) {
+    try {
+        console.log(JSON.stringify(req.body))
+        var resumeversions = await ResumeVersionControl.findOne({
+          attributes: ['version'],
+          where: {
+            ResumeId: req.body.resumeID
+          },
+          order: [
+            ['version', 'DESC'],
+          ]
+        })
+        if(resumeversions != null){
+            const resumeVersionControl = await ResumeVersionControl.create({
+                resumeTitle: req.body.resumeTitle,
+                ResumeId: req.body.resumeID,
+                fullName: req.body.fullName,
+                version: resumeversions.dataValues.version + 1,
+                location: req.body.location,
+                phoneNumber: req.body.phoneNumber,
+                email: req.body.email,
+                professionalSummary: req.body.professionalSummary,
+                templaterType: req.body.templaterType,
+                jobDescription: req.body.jobDescription,
+                jobTitle: req.body.jobTitle,
+                matchScore: req.body.matchScore
+            })
+            if(resumeVersionControl){
+                console.log("Resume Version control Create.")
+                req.body.educationDetails.forEach( async element => {
+                  const education = await EducationDetails.create({
+                    instituteName: element.instituteName,
+                    ResumeVersionControlId: resumeVersionControl.id,
+                    degree: element.degree,
+                    location: element.location,
+                    startDate : element.startDate ,
+                    endDate: element.endDate,
+                    gpa: element.gpa,
+                  })
+                  if(education){
+                    console.log("Education Added.")
+                    console.log("element : " + JSON.stringify(element))
+                    console.log("element : " + element.awards)
+                    element.awards.forEach(async element1 => {
+                      const award = await Awards.create({
+                        description: element1,
+                        EducationDetailId: education.id
+                      })
+                    });
+                    element.courses.forEach(async element2 => {
+                      const course = await Courses.create({
+                        description: element2,
+                        EducationDetailId: education.id
+                      })
+                    });
+                  }
+                });
+
+                req.body.experienceDetails.forEach( async element3 => {
+                  const experience = await ExperienceDetails.create({
+                    ResumeVersionControlId: resumeVersionControl.id,
+                    orgName: element3.orgName,
+                    roleName: element3.roleName,
+                    location: element3.location,
+                    startDate : element3.startDate ,
+                    endDate: element3.endDate
+                  })
+                  if(experience){
+                    console.log("Education Added.")
+                    element3.experienceNotes.forEach(async element4 => {
+                      const experienceNote = await ExperienceNotes.create({
+                        description: element4,
+                        ExperienceDetailId: experience.id
+                      })
+                    });
+                  }
+                });
+
+                req.body.leadershipDetails.forEach( async leader => {
+                  const leadership = await Leadership.create({
+                    ResumeVersionControlId: resumeVersionControl.id,
+                    orgName: leader.orgName,
+                    leadershipPosition: leader.leadershipPosition,
+                    startDate : leader.startDate ,
+                    endDate: leader.endDate
+                  })
+                  if(leadership){
+                    console.log("Leadership Added.")
+                    leader.leadershipNotes.forEach(async leaderNote => {
+                      const leadershipNote = await LeadershipNotes.create({
+                        description: leaderNote,
+                        LeadershipId: leadership.id
+                      })
+                    });
+                  }
+                });
+
+                req.body.honorDetails.forEach( async honorEle => {
+                  const honor = await Honors.create({
+                    ResumeVersionControlId: resumeVersionControl.id,
+                    name: honorEle.name,
+                    honorOrg: honorEle.honorOrg,
+                    startDate : honorEle.startDate,
+                    endDate: honorEle.endDate
+                  })
+                  if(honor){
+                    console.log("Honor Added.")
+                    honorEle.honorNotes.forEach(async honorNoteEle => {
+                      const honorNote = await HonorNotes.create({
+                        description: honorNoteEle,
+                        HonorId: honor.id
+                      })
+                    });
+                  }
+                });
+
+                req.body.projectDetails.forEach( async element10 => {
+                  const project = await ProjectDetails.create({
+                    ResumeVersionControlId: resumeVersionControl.id,
+                    orgName: element10.orgName,
+                    projectName: element10.projectName,
+                    location: element10.location,
+                    startDate : element10.startDate ,
+                    endDate: element10.endDate
+                  })
+                  if(project){
+                    console.log("Project Added.")
+                    element10.projectNotes.forEach(async element4 => {
+                      const projectNote = await ProjectNotes.create({
+                        description: element4,
+                        ProjectDetailId: project.id
+                      })
+                    });
+                  }
+                });
+
+                req.body.skills.forEach( async element5 => {
+                  const skill = await Skills.create({
+                    ResumeVersionControlId: resumeVersionControl.id,
+                    Name : element5.name ,
+                    level : element5.level 
+                  })
+                });
+
+                res.send({
+                  status:"OK",
+                  data:resumeversions.toJSON()
+                })
+            }
+        }
+    } catch (err) {
+      console.log(err)
+      res.status(400).send({
+        error: 'Some issue occured while saving story.'
+      })
+    }
+  },
 }
