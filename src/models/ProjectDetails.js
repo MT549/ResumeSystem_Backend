@@ -3,5 +3,6 @@ module.exports = (sequelize, DataTypes) =>
         orgName: DataTypes.STRING,
         location: DataTypes.STRING,
         startDate: DataTypes.STRING,
-        endDate: DataTypes.STRING
+        endDate: DataTypes.STRING,
+        projectName: DataTypes.STRING
     })
