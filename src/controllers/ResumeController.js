@@ -22,7 +22,10 @@ module.exports = {
                 phoneNumber: req.body.phoneNumber,
                 email: req.body.email,
                 professionalSummary: req.body.professionalSummary,
-                templaterType: req.body.templaterType
+                templaterType: req.body.templaterType,
+                jobDescription: req.body.jobDescription,
+                jobTitle: req.body.jobTitle,
+                matchScore: req.body.matchScore
             })
             if(resumeVersionControl){
                 console.log("Resume Version control Create.")
@@ -117,6 +120,7 @@ module.exports = {
                   const project = await ProjectDetails.create({
                     ResumeVersionControlId: resumeVersionControl.id,
                     orgName: element10.orgName,
+                    projectName: element10.projectName,
                     location: element10.location,
                     startDate : element10.startDate ,
                     endDate: element10.endDate
@@ -174,13 +178,15 @@ module.exports = {
               {model: Honors, include: [{model: HonorNotes}]},
               {model: Leadership, include: [{model: LeadershipNotes}]},
               {model: Skills}
-            ],
-
+            ]
           }
         ],
         where: {
           UserId: req.params.id
-        }
+        },
+        order: [
+          ['id', 'DESC'],
+        ]
       })
 
       res.send(resume)
@@ -188,6 +194,94 @@ module.exports = {
       console.log(err)
       res.status(400).send({
         error: 'Some issue occured while getting resume.'
+      })
+    }
+  },
+
+  async deleteResumeVersion (req, res) {
+    console.log("\n\n\n\n\n")
+    try {
+      var resumeOId;
+      const resumeVerControl = await ResumeVersionControl.findOne({
+        where: { id: req.params.id }
+      })
+      console.log("resumeVersionControl" + resumeVerControl)
+
+      const resumeVersionControl = await ResumeVersionControl.destroy({
+        where: { id: req.params.id}
+      })
+
+      await EducationDetails.destroy({
+        where: { ResumeVersionControlId: null}
+      })
+      await ExperienceDetails.destroy({
+        where: { ResumeVersionControlId: null}
+      })
+      await ProjectDetails.destroy({
+        where: { ResumeVersionControlId: null}
+      })
+      await Honors.destroy({
+        where: { ResumeVersionControlId: null}
+      })
+      await Leadership.destroy({
+        where: { ResumeVersionControlId: null}
+      })
+      await Skills.destroy({
+        where: { ResumeVersionControlId: null}
+      })
+      
+      await Awards.destroy({
+        where: { EducationDetailId : null}
+      })
+      await Courses.destroy({
+        where: { EducationDetailId : null}
+      })
+      await ExperienceNotes.destroy({
+        where: { ExperienceDetailId : null}
+      })
+      await ProjectNotes.destroy({
+        where: { ProjectDetailId : null}
+      })
+      await HonorNotes.destroy({
+        where: { HonorId : null}
+      })
+      await LeadershipNotes.destroy({
+        where: { LeadershipId : null}
+      })
+
+
+      if(resumeVerControl != null){
+        console.log("find resume")
+
+        resumeId = resumeVerControl.dataValues.ResumeId
+        const resumevers = await ResumeVersionControl.findAll({
+          where: {ResumeId: resumeId}
+        })
+            
+        console.log("1: "+resumevers)
+            
+        if(resumevers == null || (resumevers != null && resumevers.length < 1)){
+          console.log(resumevers)
+          const resumed = await Resume.destroy({
+            where: { id: resumeId}
+          })
+          if(resumed != null){
+            console.log("Deleted resume")
+            res.send({status: "Success", deletedResume: resumeVersionControl})
+          }
+          else{
+            console.log("Deleted resume")
+            res.send({status: "Success", deletedResume: resumeVersionControl})
+          }
+              
+        }else{
+          console.log("Deleted resume")
+          res.send({status: "Success", deletedResume: resumeVersionControl})
+        }
+      }
+    } catch (err) {
+      res.status(500).send({
+        error: 'An error has occured trying to delete resume: ' + err
       })
     }
   },
