@@ -12,7 +12,9 @@ module.exports=(app) => {
     router.put('/user', AuthenticationController.updateUser)
 
     router.post('/saveResume', ResumeController.saveResume)
+    router.put('/saveResumeVersion', ResumeController.saveResumeVersion)
     router.get('/resumes/:id', ResumeController.getUserResumes)
+    router.delete('/resume/:id', ResumeController.deleteResumeVersion)
 
     app.use("/", router)
 }
