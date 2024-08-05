@@ -444,6 +444,44 @@ module.exports = {
     }
   },
   
+  async getAllUserResumes (req, res){
+    try {
+      var users = await User.findAll({
+        include: [
+          {
+            model: Resume,
+            include: [
+              {
+                model: ResumeVersionControl,
+                include: [
+                  {model: EducationDetails, include: [{model: Awards}, {model:Courses}]},
+                  {model: ExperienceDetails, include: [{model: ExperienceNotes}]},
+                  {model: ProjectDetails, include: [{model: ProjectNotes}]},
+                  {model: Honors, include: [{model: HonorNotes}]},
+                  {model: Leadership, include: [{model: LeadershipNotes}]},
+                  {model: Skills}
+                ]
+              }
+            ]
+          }
+        ],
+        where: {
+          permission: "User"
+        },
+        order: [
+          ['email', 'DESC'],
+        ]
+      })
+
+      res.send(users)
+    } catch (err) {
+      console.log(err)
+      res.status(400).send({
+        error: 'Some issue occured while getting users.'
+      })
+    }
+  },
+
   async saveResumeComments (req, res) {
     try {
       const resume = await ResumeVersionControl.findOne({
