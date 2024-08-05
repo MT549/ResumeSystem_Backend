@@ -7,8 +7,9 @@ module.exports = (sequelize, DataTypes) =>
         email: DataTypes.STRING,
         professionalSummary: DataTypes.TEXT,
         templaterType: DataTypes.STRING,
-        jobDescription: DataTypes.TEXT,
+        jobDescription: DataTypes.STRING,
         jobTitle: DataTypes.STRING,
         version: DataTypes.INTEGER,
         matchScore: DataTypes.TEXT,
+        comments: DataTypes.TEXT
     })
