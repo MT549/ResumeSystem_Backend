@@ -13,6 +13,8 @@ module.exports=(app) => {
 
     router.post('/saveResume', ResumeController.saveResume)
     router.put('/saveResumeVersion', ResumeController.saveResumeVersion)
+    router.put('/saveResumeComments/:id', ResumeController.saveResumeComments)
+    router.get('/allResumes', ResumeController.getAllUserResumes)
     router.get('/resumes/:id', ResumeController.getUserResumes)
     router.delete('/resume/:id', ResumeController.deleteResumeVersion)
 
