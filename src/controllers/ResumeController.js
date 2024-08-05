@@ -1,5 +1,5 @@
 const { where } = require('sequelize')
-const {Resume, ResumeVersionControl, EducationDetails, Awards, Courses, ExperienceDetails, ExperienceNotes, Skills, ProjectDetails, ProjectNotes, Honors, HonorNotes,Leadership, LeadershipNotes} = require('../models')
+const {Resume, ResumeVersionControl, EducationDetails, Awards, Courses, ExperienceDetails, ExperienceNotes, Skills, ProjectDetails, ProjectNotes, Honors, HonorNotes,Leadership, LeadershipNotes, User} = require('../models')
 
 module.exports = {
   async saveResume (req, res) {
@@ -440,6 +440,27 @@ module.exports = {
       console.log(err)
       res.status(400).send({
         error: 'Some issue occured while saving story.'
+      })
+    }
+  },
+  
+  async saveResumeComments (req, res) {
+    try {
+      const resume = await ResumeVersionControl.findOne({
+        where: { id: req.params.id}
+      })
+      if(resume != null){
+        console.log("found User")
+        resume.comments = req.body.comments
+        
+        console.log("set resume comments")
+        await resume.save()
+        console.log("Update resume comments")
+        res.send({status: "Success", updatedResume: resume})
+      }
+    } catch (err) {
+      res.status(500).send({
+        error: 'An error has occured trying to update resume comments: ' + err
       })
     }
   },
